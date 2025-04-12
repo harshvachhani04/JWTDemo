@@ -14,11 +14,13 @@ namespace JWTDemo.Controllers
     [ApiController]
     public class LoginController : ControllerBase
     {
+        private readonly ILogger<LoginController> _logger;
         private readonly JwtTokenGenerator tokenGenerator;
         private readonly IUserRepository _userRepository;
 
-        public LoginController(JwtTokenGenerator tokenGenerator, IUserRepository userRepository)
+        public LoginController(ILogger<LoginController> logger, JwtTokenGenerator tokenGenerator, IUserRepository userRepository)
         {
+            this._logger = logger;
             this.tokenGenerator = tokenGenerator;
             _userRepository = userRepository;
         }
@@ -26,13 +28,23 @@ namespace JWTDemo.Controllers
         [HttpPost]
         public async Task<IActionResult> LoginUser([FromBody] LoginDTO loginDTO)
         {
-            UserDemo user = await _userRepository.GetUserAsync(loginDTO.Username, loginDTO.Password);
-            if(user != null)
+            try
             {
-                var token = this.tokenGenerator.GenerateToken(user.Username, user.Role);
-                return Ok(new { token = token });
+                UserDemo user = await _userRepository.GetUserAsync(loginDTO.Username, loginDTO.Password);
+                if (user != null)
+                {
+                    _logger.LogInformation("User Found");
+                    var token = this.tokenGenerator.GenerateToken(user.Username, user.Role);
+                    return Ok(new { token = token });
+                }
+                _logger.LogWarning("Invalid Credentials");
+                return Unauthorized("Invalid Credentials");
             }
-            return Unauthorized("Invalid Credentials");
+            catch (Exception ex)
+            {
+                _logger.LogError($"Exception in Login User, {ex.Message} {ex}", ex);
+                return NoContent();
+            }
         }
 
         [Authorize]
@@ -45,6 +57,7 @@ namespace JWTDemo.Controllers
             {
                 return Ok(user);
             }
+            _logger.LogWarning("Invalid User Id");
             return NotFound();
         }
 
@@ -58,6 +71,7 @@ namespace JWTDemo.Controllers
             {
                 return Ok(users);
             }
+            _logger.LogWarning("No user found");
             return NotFound();
         }
     }
