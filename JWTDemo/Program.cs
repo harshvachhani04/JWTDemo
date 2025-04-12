@@ -44,11 +44,12 @@ builder.Services.AddSwaggerGen(options =>
 });
 
 builder.Services.AddSingleton<JwtTokenGenerator>();
+builder.Services.AddScoped<IUserRepository, UserSQLRepository>();
 builder.Services.AddDbContext<AppDbContext>(options =>
     options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnectionString"))
 );
-var jwtSettings  = builder.Configuration.GetSection("JwtSettings");
 
+var jwtSettings  = builder.Configuration.GetSection("JwtSettings");
 builder.Services.AddAuthentication("Bearer")
     .AddJwtBearer("Bearer", options =>
     options.TokenValidationParameters = new Microsoft.IdentityModel.Tokens.TokenValidationParameters
