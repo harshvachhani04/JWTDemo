@@ -34,7 +34,9 @@ builder.Services.AddSwaggerGen(options =>
             Type = ReferenceType.SecurityScheme
         }
     };
+    //Add authorize button in swagger UI
     options.AddSecurityDefinition(jwtSecurityScheme.Reference.Id, jwtSecurityScheme);
+    //Verify authentication
     options.AddSecurityRequirement(new OpenApiSecurityRequirement
     {
         {jwtSecurityScheme, Array.Empty<string>() }
