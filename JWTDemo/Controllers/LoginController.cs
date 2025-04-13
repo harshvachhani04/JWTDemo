@@ -42,7 +42,7 @@ namespace JWTDemo.Controllers
                 if (user != null)
                 {
                     _logger.LogInformation("User Found");
-                    var token = this.tokenGenerator.GenerateToken(user.Username, user.Role);
+                    var token = this.tokenGenerator.GenerateToken(user.UserId, user.Role);
                     return Ok(new { token = token });
                 }
                 _logger.LogWarning("Invalid Credentials");
@@ -98,9 +98,9 @@ namespace JWTDemo.Controllers
             var user = await _userRepository.GetUserInfoAsync(username: updatedUser.Username);
             if(user != null)
             {
-                var currentUserName = User.FindFirst(ClaimTypes.Name)?.Value;
+                var currentUserId = Convert.ToInt32(User.FindFirst(ClaimTypes.NameIdentifier)?.Value);
                 var curretUserRole = User.FindFirst(ClaimTypes.Role)?.Value;
-                if (currentUserName == user.Username || curretUserRole == "admin")
+                if (currentUserId == user.UserId || curretUserRole == "admin")
                 {
                     var result = await _userRepository.UpdateUserAsync(updatedUser);
                     if (result)

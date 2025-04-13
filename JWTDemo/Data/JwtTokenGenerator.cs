@@ -13,7 +13,7 @@ namespace JWTDemo.Data
         {
             _configuration = configuration;
         }
-        public string GenerateToken(string username, string role)
+        public string GenerateToken(int userId, string role)
         {
             var jwtSettings = _configuration.GetSection("JwtSettings");
             var key = Encoding.UTF8.GetBytes(jwtSettings["Key"]);
@@ -21,7 +21,7 @@ namespace JWTDemo.Data
 
             var claims = new[]
             {
-                new Claim(ClaimTypes.Name, username),
+                new Claim(ClaimTypes.NameIdentifier, userId.ToString()),
                 new Claim(ClaimTypes.Role, role)
             };
 
