@@ -53,8 +53,53 @@ namespace JWTDemo.Data
                         new Product { ProductId = 20, ProductName = "Portable Bluetooth Speaker", Price = 35.99m, Description = "Waterproof speaker with deep bass", StockQuantity = 60 }
                     }
                 );
+            modelBuilder.Entity<Cart>().HasData(
+                new List<Cart>
+                {
+                    new Cart
+                    {
+                        CartId = 1,
+                        UserId = 1,
+                        CreatedAt = new DateTime(2024, 12, 1, 10, 0, 0),
+                    },
+                    new Cart
+                    {
+                        CartId = 2,
+                        UserId = 2,
+                        CreatedAt = new DateTime(2024, 12, 1, 10, 0, 0),
+                    },
+                    new Cart
+                    {
+                        CartId = 3,
+                        UserId = 3,
+                        CreatedAt = new DateTime(2024, 12, 1, 10, 0, 0),
+                    }
+                });
+            modelBuilder.Entity<CartItem>().HasData(
+                new List<CartItem>
+                {
+                    new CartItem { CartItemId = 1, CartId = 1, ProductId = 2, Quantity = 1 }, // Mechanical Keyboard
+                    new CartItem { CartItemId = 2, CartId = 1, ProductId = 5, Quantity = 2 },  // External Hard Drive
+	                new CartItem { CartItemId = 3, CartId = 2, ProductId = 1, Quantity = 1 }, // Wireless Mouse
+	                new CartItem { CartItemId = 4, CartId = 2, ProductId = 8, Quantity = 1 }, // HD Webcam
+	                new CartItem { CartItemId = 5, CartId = 2, ProductId = 3, Quantity = 1 },   // 27-inch Monitor
+	                new CartItem { CartItemId = 6, CartId = 3, ProductId = 10, Quantity = 1 }, // Graphic Tablet
+	                new CartItem { CartItemId = 7, CartId = 3, ProductId = 13, Quantity = 3 }  // USB Flash Drive
+                });
+
+            modelBuilder.Entity<CartItem>()
+                .HasOne(ci => ci.Cart)
+                .WithMany(ci => ci.Items)
+                .HasForeignKey(ci => ci.CartId);
+
+            modelBuilder.Entity<CartItem>()
+                .HasOne(ci => ci.Product)
+                .WithMany()
+                .HasForeignKey(ci => ci.ProductId);
         }
         public DbSet<UserDemo> TblUsers { get; set; }
         public DbSet<Product> Products { get; set; }
+        public DbSet<Cart> Carts { get; set; }
+        public DbSet<CartItem> CartItems { get; set; }
     }
 }

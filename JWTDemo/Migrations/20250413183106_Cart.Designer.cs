@@ -4,6 +4,7 @@ using JWTDemo.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace JWTDemo.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    partial class AppDbContextModelSnapshot : ModelSnapshot
+    [Migration("20250413183106_Cart")]
+    partial class Cart
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -44,19 +47,19 @@ namespace JWTDemo.Migrations
                         new
                         {
                             CartId = 1,
-                            CreatedAt = new DateTime(2024, 12, 1, 10, 0, 0, 0, DateTimeKind.Unspecified),
+                            CreatedAt = new DateTime(2025, 4, 12, 0, 1, 5, 485, DateTimeKind.Local).AddTicks(6977),
                             UserId = 1
                         },
                         new
                         {
                             CartId = 2,
-                            CreatedAt = new DateTime(2024, 12, 1, 10, 0, 0, 0, DateTimeKind.Unspecified),
+                            CreatedAt = new DateTime(2025, 4, 13, 0, 1, 5, 489, DateTimeKind.Local).AddTicks(2434),
                             UserId = 2
                         },
                         new
                         {
                             CartId = 3,
-                            CreatedAt = new DateTime(2024, 12, 1, 10, 0, 0, 0, DateTimeKind.Unspecified),
+                            CreatedAt = new DateTime(2025, 4, 11, 0, 1, 5, 489, DateTimeKind.Local).AddTicks(2461),
                             UserId = 3
                         });
                 });
