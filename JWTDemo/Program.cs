@@ -54,6 +54,7 @@ builder.Services.AddSwaggerGen(options =>
 
 builder.Services.AddSingleton<JwtTokenGenerator>();
 builder.Services.AddScoped<IUserRepository, UserSQLRepository>();
+builder.Services.AddScoped<IProductRepository, ProductSQLRepository>();
 builder.Services.AddDbContext<AppDbContext>(options =>
     options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnectionString"))
 );
