@@ -25,6 +25,13 @@ namespace JWTDemo.Controllers
             _userRepository = userRepository;
         }
 
+        [HttpGet]
+        [Route("IsAvailable")]
+        public async Task<bool> IsAvaialble()
+        {
+            return true;
+        }
+
         [HttpPost]
         public async Task<IActionResult> LoginUser([FromBody] LoginDTO loginDTO)
         {
@@ -54,10 +61,7 @@ namespace JWTDemo.Controllers
         {
             var user = await _userRepository.GetUserInfoAsync(userId);
             if(user != null)
-            {
                 return Ok(user);
-            }
-            _logger.LogWarning("Invalid User Id");
             return NotFound();
         }
 
@@ -68,10 +72,51 @@ namespace JWTDemo.Controllers
         {
             var users = await _userRepository.GetAllUsersAsync();
             if(users != null)
-            {
                 return Ok(users);
+            return NotFound();
+        }
+
+        [HttpPost]
+        [Route("AddUser")]
+        public async Task<IActionResult> RegisterNewUserAsyc(UserDemo newUser)
+        {
+            var user = await _userRepository.IsUserExistAsync(newUser.Username);
+            if(!user)
+            {
+                var newUserId = await _userRepository.RegisterNewUserAsyc(newUser);
+                return CreatedAtAction(nameof(GetUserInfo), new { userId = newUserId }, newUser);
             }
-            _logger.LogWarning("No user found");
+            return Conflict( new { StatusCode = 409, error = "Conflict", message ="User already exist" });
+        }
+
+        [HttpPut]
+        [Route("UpdateUser")]
+        public async Task<IActionResult> UpdateUserAsync(UserDemo updatedUser)
+        {
+            var isUserExist = await _userRepository.IsUserExistAsync(updatedUser.Username);
+            if(isUserExist)
+            {
+                var result = await _userRepository.UpdateUserAsync(updatedUser);
+                if(result)
+                    return Ok(result);
+                return StatusCode(500);
+            }
+            return NotFound();
+        }
+
+        [Authorize(Roles = "admin")]
+        [HttpDelete]
+        [Route("DeleteUser")]
+        public async Task<IActionResult> DeleteUserAsync(int userId)
+        {
+            var user = await _userRepository.GetUserInfoAsync(userId);
+            if (user != null)
+            {
+                var sucess = await _userRepository.DeleteUserAsync(user);
+                if(sucess)
+                    return Ok(user);
+                return StatusCode(500);
+            }
             return NotFound();
         }
     }
