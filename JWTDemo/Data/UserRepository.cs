@@ -9,7 +9,7 @@ namespace JWTDemo.Data
     {
         Task<UserDemo> GetUserAsync(string username, string password);
         Task<List<UserDemo>> GetAllUsersAsync();
-        Task<UserDemo> GetUserInfoAsync(int userId);
+        Task<UserDemo> GetUserInfoAsync(int userId = -1, string username = "");
         Task<int> RegisterNewUserAsyc(UserDemo userDemo);
         Task<bool> DeleteUserAsync(UserDemo user);
         Task<bool> UpdateUserAsync(UserDemo userDemo);
@@ -35,9 +35,17 @@ namespace JWTDemo.Data
             return await _context.TblUsers.ToListAsync();
         }
 
-        public async Task<UserDemo> GetUserInfoAsync(int userId)
+        public async Task<UserDemo> GetUserInfoAsync(int userId = -1, string username = "")
         {
-            return await _context.TblUsers.FirstOrDefaultAsync(u => u.UserId == userId);
+            if(userId > 0)
+            {
+                return await _context.TblUsers.FirstOrDefaultAsync(u => u.UserId == userId);
+            }
+            else if (username != null)
+            {
+                return await _context.TblUsers.FirstOrDefaultAsync(u => u.Username == username);
+            }
+            return null;
         }
 
         public async Task<int> RegisterNewUserAsyc(UserDemo userDemo)
