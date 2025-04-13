@@ -4,6 +4,7 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http.Metadata;
 using Microsoft.AspNetCore.Mvc;
 using System.Net.NetworkInformation;
+using System.Security.Claims;
 using System.Threading.Tasks;
 
 // For more information on enabling Web API for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
@@ -89,17 +90,24 @@ namespace JWTDemo.Controllers
             return Conflict( new { StatusCode = 409, error = "Conflict", message ="User already exist" });
         }
 
+        [Authorize]
         [HttpPut]
         [Route("UpdateUser")]
         public async Task<IActionResult> UpdateUserAsync(UserDemo updatedUser)
         {
-            var isUserExist = await _userRepository.IsUserExistAsync(updatedUser.Username);
-            if(isUserExist)
+            var user = await _userRepository.GetUserInfoAsync(username: updatedUser.Username);
+            if(user != null)
             {
-                var result = await _userRepository.UpdateUserAsync(updatedUser);
-                if(result)
-                    return Ok(result);
-                return StatusCode(500);
+                var currentUserName = User.FindFirst(ClaimTypes.Name)?.Value;
+                var curretUserRole = User.FindFirst(ClaimTypes.Role)?.Value;
+                if (currentUserName == user.Username || curretUserRole == "admin")
+                {
+                    var result = await _userRepository.UpdateUserAsync(updatedUser);
+                    if (result)
+                        return Ok( new { message = "User updated sucessfully", data = updatedUser });
+                    return StatusCode(500); 
+                }
+                return Forbid();
             }
             return NotFound();
         }
