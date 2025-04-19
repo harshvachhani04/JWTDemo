@@ -1,7 +1,9 @@
 ﻿using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
 
 namespace JWTDemo.Model
 {
+    [Table("Cart")]
     public class Cart
     {
         [Key]
@@ -10,6 +12,7 @@ namespace JWTDemo.Model
         public List<CartItem> Items { get; set; }
         public DateTime CreatedAt { get; set; } = DateTime.Now;
     }
+    [Table("CartItem")]
     public class CartItem
     {
         [Key]
