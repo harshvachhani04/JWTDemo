@@ -8,7 +8,7 @@ namespace JWTDemo.Model
         public int CartId { get; set; }
         public int UserId { get; set; }
         public List<CartItem> Items { get; set; }
-        public DateTime CreatedAt { get; set; }
+        public DateTime CreatedAt { get; set; } = DateTime.Now;
     }
     public class CartItem
     {
