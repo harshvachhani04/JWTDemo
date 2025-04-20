@@ -22,7 +22,7 @@ namespace JWTDemo.Data
         {
             try
             {
-                var cart = await _context.Carts.FirstOrDefaultAsync(c => c.UserId == userId);
+                var cart = await _context.Carts.Where(c => c.UserId == userId).Include(r => r.Items).FirstOrDefaultAsync();
                 if (cart == null)
                 {
                     cart = new Cart
@@ -44,7 +44,7 @@ namespace JWTDemo.Data
                     var item = cart.Items.FirstOrDefault(c => c.ProductId == cartItem.ProductId);
                     if (item != null)
                     {
-                        item.Quantity += cartItem.Quantity;
+                        item.Quantity = cartItem.Quantity;
                         _context.CartItems.Update(item);
                     }
                     else
@@ -57,8 +57,8 @@ namespace JWTDemo.Data
                         };
                         await _context.AddAsync(newCartItems);
                     }
-                    await _context.SaveChangesAsync();
                 }
+                await _context.SaveChangesAsync();
             }
             catch (Exception ex)
             {
